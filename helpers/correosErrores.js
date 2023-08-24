@@ -4,8 +4,8 @@ export const enviarCorreoErrores = async ( tipoError ) => {
 
     const mailOptions = {
         from: 'sgruver@gruver.mx',
-        to: ['jpedroza@gruver.mx'],
-        subject: 'Error en rutina ecommers',
+        to: ['monitor_rutinas@gruver.mx'],
+        subject: 'Error en bot biocheck',
         html: tipoError,
     }
     await transporter.sendMail(mailOptions, ( error, info ) => {

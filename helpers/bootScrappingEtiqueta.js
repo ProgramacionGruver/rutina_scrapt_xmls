@@ -11,20 +11,6 @@ export const esperaEtiqueta = async (pagina, etiqueta) => {
     throw new Error(`No se encontró el elemento ${etiqueta} después de ${tiempoMaximo} segundos.`);
 }
 
-/**
- * 
- * 
- * INPUT_LOGIN: '.hasClear-0-2-435',
-    USUARIO: 'xmxgomsax',
-    EVENTO_INPUT_USUARIO: '.primary-0-2-344',
-    INPUT_PASSWORD: '.hasPass-0-2-431',
-    PASSWORD: 'GRUVER2015',
-    EVENTO_INPUT_PASSWORD: '.primary-0-2-344',
-    INPUT_BUSQUEDA_PUESTO: '#keywordInput',
-    NUMERO_TOTAL_ENCONTRADOS: '.c0110243 span',
-    ENLACE_PERFILES: '.c01520 a',
-    DETALLE_BOTON: '.c0134 button',
-  */
 
 export const buscarAspiranteOCC = async () => {
 
@@ -56,15 +42,13 @@ export const buscarAspiranteOCC = async () => {
         //========INGRESAR INFORMACION EN BUSQUEDA DE TALENTO====================   
         await new Promise(resolve => setTimeout(resolve, 10000))
         await pagina.goto('https://erp.biocheck.net/web#menu_id=232&action=287&cids=116')
-        await new Promise(resolve => setTimeout(resolve, 2000))
-
-
-
+        await new Promise(resolve => setTimeout(resolve, 4000))
+/*
        await pagina.evaluate(() => {
         const selectElement = document.querySelector('#o_field_input_12');
         selectElement.value = '"checks"';
         selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-    })
+    })*/
 
     await pagina.evaluate(() => {
         const selectElement = document.querySelector('#o_field_input_18');
@@ -79,6 +63,7 @@ export const buscarAspiranteOCC = async () => {
     await fechaFin.type('22/08/2023')
 
     await pagina.click('button[name="get_report"]')
+    await new Promise(resolve => setTimeout(resolve, 8000))
 
     await pagina.click('.close')
 
