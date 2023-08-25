@@ -29,7 +29,6 @@ cron.schedule('20 9 * * 1-6', () => {
 cron.schedule('0 0 1 * *', () => {
     obtenerResultadosMensuales()
 })
-//obtenerTurnoEmpleado()
 
 // Routing
 //app.use('/ecommers', producto)
