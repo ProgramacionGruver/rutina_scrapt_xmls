@@ -88,22 +88,43 @@ export const obtenerTurnoEmpleado = async (req, res) => {
                 await api.put('/usuarios', detalleUsuario )
                 const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
                 
-                const primeraHora = parse(data.turnoLunesViernes.split(" - ")[0], 'HH:mm', new Date());
-                const segundaHora = parse(dataCelda[7], 'HH:mm', new Date());
+                let detalleEntrada = {}
                 
-                const detalleEntrada = {
-                    numero_empleado: data.numero_empleado,
-                    nombre: data.nombre,
-                    departamento: data.departamento,
-                    centroTrabajo: data.siglasCentroTrabajo,
-                    fecha: fechaActual,
-                    turnoLunesViernes:data.turnoLunesViernes,
-                    turnoEntrada:data.turnoLunesViernes.split(" - ")[0],
-                    turnoSalida:data.turnoLunesViernes.split(" - ")[1],
-                    entrada: dataCelda[7],
-                    retardo: isBefore(primeraHora, segundaHora)
-                }
+                const diaSemana = new Date()
 
+                if (diaSemana.getDay() !== 6) {
+                    const primeraHora = parse(data.turnoSabados.split(" - ")[0], 'HH:mm', new Date())
+                    const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
+
+                    detalleEntrada = {
+                        numero_empleado: data.numero_empleado,
+                        nombre: data.nombre,
+                        departamento: data.departamento,
+                        centroTrabajo: data.siglasCentroTrabajo,
+                        fecha: fechaActual,
+                        turnoLunesViernes:data.turnoSabados,
+                        turnoEntrada:data.turnoSabados.split(" - ")[0],
+                        turnoSalida:data.turnoSabados.split(" - ")[1],
+                        entrada: dataCelda[7],
+                        retardo: isBefore(primeraHora, segundaHora)
+                    }
+                } else {
+                    const primeraHora = parse(data.turnoLunesViernes.split(" - ")[0], 'HH:mm', new Date())
+                    const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
+
+                    detalleEntrada = {
+                        numero_empleado: data.numero_empleado,
+                        nombre: data.nombre,
+                        departamento: data.departamento,
+                        centroTrabajo: data.siglasCentroTrabajo,
+                        fecha: fechaActual,
+                        turnoLunesViernes:data.turnoLunesViernes,
+                        turnoEntrada:data.turnoLunesViernes.split(" - ")[0],
+                        turnoSalida:data.turnoLunesViernes.split(" - ")[1],
+                        entrada: dataCelda[7],
+                        retardo: isBefore(primeraHora, segundaHora)
+                    }
+                }
 
                 return detalleEntrada
             }
