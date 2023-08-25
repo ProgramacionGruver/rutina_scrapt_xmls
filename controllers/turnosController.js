@@ -1,10 +1,12 @@
 import puppeteer from 'puppeteer'
 import randomUserAgent from 'random-useragent'
 import dayjs from 'dayjs'
+import { parse, isBefore } from 'date-fns'
 
 import { api } from '../boot/axios.js'
 
 import { enviarCorreoErrores } from '../helpers/correosErrores.js'
+import { generarExcel } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
     const navegador = await puppeteer.launch({ headless: false })
@@ -51,7 +53,7 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         await fechaFin.type(fechaActual)
         /**obtener reporte*/
         await pagina.click('button[name="get_report"]')
-        await new Promise(resolve => setTimeout(resolve, 8000))
+        await new Promise(resolve => setTimeout(resolve, 15000))
         /**cerrar advertencia*/
         await pagina.click('.close')
 
@@ -71,29 +73,47 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         seccionError = 'Destructuring error.'
         const tableData = await Promise.all(rows.map(async (row, index) => {
             const celdas = await row.$$('td')
-            const data = await Promise.all(celdas.map(async cell => {
+            const dataCelda = await Promise.all(celdas.map(async cell => {
                 const content = await cell.evaluate(node => node.textContent)
                 return content.trim()
             }))
 
-            if ( data[4] ) {
+            if ( dataCelda[4] ) {
 
                 const detalleUsuario = {
-                    numero_empleado: data[0],
-                    turno: data[4].replace('TURNO ', '') 
+                    numero_empleado: dataCelda[0],
+                    turnoLunesViernes: dataCelda[4].replace('TURNO ', '') 
                 }
 
                 await api.put('/usuarios', detalleUsuario )
-                console.log(`${data[0]}-${data[4]}`, index)
-            }
+                const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
+                
+                const primeraHora = parse(data.turnoLunesViernes.split(" - ")[0], 'HH:mm', new Date());
+                const segundaHora = parse(dataCelda[7], 'HH:mm', new Date());
+                
+                const detalleEntrada = {
+                    numero_empleado: data.numero_empleado,
+                    nombre: data.nombre,
+                    departamento: data.departamento,
+                    centroTrabajo: data.siglasCentroTrabajo,
+                    fecha: fechaActual,
+                    turnoLunesViernes:data.turnoLunesViernes,
+                    turnoEntrada:data.turnoLunesViernes.split(" - ")[0],
+                    turnoSalida:data.turnoLunesViernes.split(" - ")[1],
+                    entrada: dataCelda[7],
+                    retardo: isBefore(primeraHora, segundaHora)
+                }
 
-            return {
-                numero_empleado: data[0],
-                turno: data[4]
+
+                return detalleEntrada
             }
         }))
+
+        tableData.pop()
         await navegador.close()
-        console.log(tableData)
+
+        const usuariosRetardos = tableData.filter(usuario => usuario.retardo == true)
+        generarExcel(usuariosRetardos)
 
     } catch (error) {
         await navegador.close()

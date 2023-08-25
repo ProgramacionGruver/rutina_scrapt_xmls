@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cron from 'node-cron'
 
 import db from './config/db.js'
 
@@ -18,8 +19,13 @@ db.sync()
 //permisos de cors
 app.use(cors())
 
-//obtenerTurnoEmpleado()
-obtenerResultadosMensuales()
+
+cron.schedule('59 23 * * *', () => {
+    console.log('Actualizando usuarios directorio activo...')
+})
+
+obtenerTurnoEmpleado()
+//obtenerResultadosMensuales()
 
 // Routing
 //app.use('/ecommers', producto)
