@@ -5,6 +5,8 @@ import cron from 'node-cron'
 import db from './config/db.js'
 
 import { obtenerTurnoEmpleado } from './controllers/turnosController.js'
+
+import { menejoRutinaObtenerTurnoEmpleado } from './helpers/ManejoRutina.js'
 import { obtenerResultadosMensuales } from './controllers/turnosMensualesController.js'
 
 const app = express()
@@ -19,13 +21,15 @@ db.sync()
 //permisos de cors
 app.use(cors())
 
-
-cron.schedule('59 23 * * *', () => {
-    console.log('Actualizando usuarios directorio activo...')
+cron.schedule('20 9 * * 1-6', () => {
+    menejoRutinaObtenerTurnoEmpleado()
 })
 
-obtenerTurnoEmpleado()
-//obtenerResultadosMensuales()
+
+obtenerResultadosMensuales()
+cron.schedule('0 0 1 * *', () => {
+})
+//obtenerTurnoEmpleado()
 
 // Routing
 //app.use('/ecommers', producto)

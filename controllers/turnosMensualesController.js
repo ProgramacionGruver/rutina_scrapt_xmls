@@ -30,7 +30,7 @@ export const obtenerResultadosMensuales = async (req, res) => {
 
         //========PAGINA PRINCIPAL BIOCHECK====================   
         seccionError = 'Principal biocheck error.'
-        await new Promise(resolve => setTimeout(resolve, 10000))
+        await new Promise(resolve => setTimeout(resolve, 15000))
         /**Seleccionar reportes */
         await pagina.goto('https://erp.biocheck.net/web#menu_id=232&action=287&cids=116')
         await new Promise(resolve => setTimeout(resolve, 4000))
@@ -50,15 +50,15 @@ export const obtenerResultadosMensuales = async (req, res) => {
         
         /**seleccionar fecha inicio select */
         const fechaInico = await pagina.waitForSelector('#o_field_input_13')
-        const fechaInicioFormat = dayjs().startOf('month').format("DD/MM/YYYY");
+        const fechaInicioFormat = dayjs().subtract(1, 'month').startOf('month').format("DD/MM/YYYY")
         await fechaInico.type(fechaInicioFormat)
         /**seleccionar fecha inicio fin */
         const fechaFin = await pagina.waitForSelector('#o_field_input_19')
-        const fechaFinalFormat = dayjs().endOf('month').format("DD/MM/YYYY");
+        const fechaFinalFormat = dayjs().subtract(1, 'month').endOf('month').format("DD/MM/YYYY")
         await fechaFin.type(fechaFinalFormat)
         /**obtener reporte*/
         await pagina.click('button[name="get_report"]')
-        await new Promise(resolve => setTimeout(resolve, 15000))
+        await new Promise(resolve => setTimeout(resolve, 25000))
         /**cerrar advertencia*/
         await pagina.click('.close')
 

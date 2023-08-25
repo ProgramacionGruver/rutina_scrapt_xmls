@@ -92,7 +92,7 @@ export const obtenerTurnoEmpleado = async (req, res) => {
                 
                 const diaSemana = new Date()
 
-                if (diaSemana.getDay() !== 6) {
+                if (diaSemana.getDay() === 6) {
                     const primeraHora = parse(data.turnoSabados.split(" - ")[0], 'HH:mm', new Date())
                     const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
 
@@ -139,5 +139,6 @@ export const obtenerTurnoEmpleado = async (req, res) => {
     } catch (error) {
         await navegador.close()
         enviarCorreoErrores(`[${seccionError}] / [${error}]`)
+        throw new Error()
     }
 }
