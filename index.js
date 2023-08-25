@@ -26,8 +26,8 @@ cron.schedule('20 9 * * 1-6', () => {
 })
 
 
-obtenerResultadosMensuales()
 cron.schedule('0 0 1 * *', () => {
+    obtenerResultadosMensuales()
 })
 //obtenerTurnoEmpleado()
 
