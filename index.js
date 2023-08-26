@@ -6,7 +6,7 @@ import db from './config/db.js'
 
 import { obtenerTurnoEmpleado } from './controllers/turnosController.js'
 
-import { menejoRutinaObtenerTurnoEmpleado } from './helpers/ManejoRutina.js'
+import { menejoRutinaObtenerTurnoEmpleado } from './helpers/manejoRutina.js'
 import { obtenerResultadosMensuales } from './controllers/turnosMensualesController.js'
 
 const app = express()
