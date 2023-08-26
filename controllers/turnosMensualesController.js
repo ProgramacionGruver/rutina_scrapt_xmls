@@ -6,7 +6,8 @@ import { enviarCorreoErrores } from '../helpers/correosErrores.js'
 import Checks from '../models/Checks.js'
 
 export const obtenerResultadosMensuales = async (req, res) => {
-    const navegador = await puppeteer.launch({ headless: false })
+//    const navegador = await puppeteer.launch({ headless: false })
+    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
