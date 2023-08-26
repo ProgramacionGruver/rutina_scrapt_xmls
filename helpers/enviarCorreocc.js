@@ -1,11 +1,11 @@
 import { transporter } from '../config/mail.js'
 
-export const enviarCorreo = async ( buffer, nombreArchivo ) => {
+export const enviarCorreocc = async ( buffer, nombreArchivo ) => {
 
     const mailOptions = {
         from: 'sgruver@gruver.mx',
-        to: ['RRHH@gruver.mx'] ,
-        cc:['jpedroza@gruver.mx'],
+        to: ['jpedroza@gruver.mx'] ,
+        cc:['javier.cano@gruver.mx'],
         subject: 'Retardos',
         html: 'Notificacion de retardos de sucursales',
         attachments: [

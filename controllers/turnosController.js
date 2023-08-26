@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer'
 import randomUserAgent from 'random-useragent'
 import dayjs from 'dayjs'
 import { parse, isBefore } from 'date-fns'
+import fs from 'fs'
 
 import { api } from '../boot/axios.js'
 
@@ -9,8 +10,8 @@ import { enviarCorreoErrores } from '../helpers/correosErrores.js'
 import { generarExcel } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-   // const navegador = await puppeteer.launch({ headless: false })
-   const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    const navegador = await puppeteer.launch({ headless: false })
+   //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -81,19 +82,20 @@ export const obtenerTurnoEmpleado = async (req, res) => {
 
             if ( dataCelda[4] ) {
 
-                const detalleUsuario = {
-                    numero_empleado: dataCelda[0],
-                    turnoLunesViernes: dataCelda[4].replace('TURNO ', '') 
-                }
-
-                await api.put('/usuarios', detalleUsuario )
-                const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
-                
                 let detalleEntrada = {}
                 
                 const diaSemana = new Date()
 
                 if (diaSemana.getDay() === 6) {
+    
+                    const detalleUsuario = {
+                        numero_empleado: dataCelda[0],
+                        turnoSabados: dataCelda[4].replace('TURNO ', '') 
+                    }
+    
+                    await api.put('/usuarios', detalleUsuario )
+                    const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
+
                     const primeraHora = parse(data.turnoSabados.split(" - ")[0], 'HH:mm', new Date())
                     const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
 
@@ -110,6 +112,15 @@ export const obtenerTurnoEmpleado = async (req, res) => {
                         retardo: isBefore(primeraHora, segundaHora)
                     }
                 } else {
+
+                    const detalleUsuario = {
+                        numero_empleado: dataCelda[0],
+                        turnoLunesViernes: dataCelda[4].replace('TURNO ', '') 
+                    }
+    
+                    await api.put('/usuarios', detalleUsuario )
+                    const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
+                    
                     const primeraHora = parse(data.turnoLunesViernes.split(" - ")[0], 'HH:mm', new Date())
                     const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
 
@@ -127,6 +138,8 @@ export const obtenerTurnoEmpleado = async (req, res) => {
                     }
                 }
 
+                console.log(detalleEntrada)
+
                 return detalleEntrada
             }
         }))
@@ -134,7 +147,16 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         tableData.pop()
         await navegador.close()
 
-        const usuariosRetardos = tableData.filter(usuario => usuario.retardo == true)
+        
+        const logFilePath = 'log.txt';
+        const logText = JSON.stringify(tableData, null, 2); 
+            
+        // Escribir en el archivo de registro
+        fs.appendFileSync(logFilePath, logText + '\n', 'utf-8');
+
+        const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo);
+
+      //  const usuariosRetardos = tableData.filter(usuario => !usuario && usuario.retardo == true)
         generarExcel(usuariosRetardos)
 
     } catch (error) {

@@ -1,5 +1,6 @@
 import ExcelJs from 'exceljs'
 import { enviarCorreo } from './enviarCorreo.js'
+import { enviarCorreocc } from './enviarCorreocc.js'
 
 export const generarExcel =  async ( array ) => {
     
@@ -78,4 +79,6 @@ export const generarExcel =  async ( array ) => {
 
     const buffer = await woorkbook.xlsx.writeBuffer()
     enviarCorreo( buffer, nombreArchivo )
+    enviarCorreocc( buffer, nombreArchivo )
+
 }
