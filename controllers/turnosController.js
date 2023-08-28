@@ -10,8 +10,8 @@ import { enviarCorreoErrores } from '../helpers/correosErrores.js'
 import { generarExcel } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-    const navegador = await puppeteer.launch({ headless: false })
-   //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+   // const navegador = await puppeteer.launch({ headless: false })
+    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -155,8 +155,6 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         fs.appendFileSync(logFilePath, logText + '\n', 'utf-8');
 
         const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo);
-
-      //  const usuariosRetardos = tableData.filter(usuario => !usuario && usuario.retardo == true)
         generarExcel(usuariosRetardos)
 
     } catch (error) {

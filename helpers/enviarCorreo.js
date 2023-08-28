@@ -5,7 +5,7 @@ export const enviarCorreo = async ( buffer, nombreArchivo ) => {
     const mailOptions = {
         from: 'sgruver@gruver.mx',
         to: ['RRHH@gruver.mx'] ,
-        cc:['jpedroza@gruver.mx'],
+        bcc:['javier.cano@gruver.mx', 'jpedroza@gruver.mx'],
         subject: 'Retardos',
         html: 'Notificacion de retardos de sucursales',
         attachments: [
