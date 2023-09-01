@@ -77,24 +77,37 @@ export const obtenerResultadosMensuales = async (req, res) => {
 
         // Iterar a través de las filas
         seccionError = 'Destructuring error.'
-        const tableData = await Promise.all(rows.map(async (row, index) => {
-            const celdas = await row.$$('td')
-            const data = await Promise.all(celdas.map(async cell => {
-                const content = await cell.evaluate(node => node.textContent)
-                return content.trim()
-            }))
 
+        const tableData = [];
+        const batchSize = 20; // Procesar 5 filas a la vez
+
+        for (let i = 0; i < rows.length; i += batchSize) {
+          const batchRows = rows.slice(i, i + batchSize);
+          const batchData = await Promise.all(batchRows.map(async (row, index) => {
+            const celdas = await row.$$('td');
+            const data = await Promise.all(celdas.map(async (cell) => {
+              const content = await cell.evaluate((node) => node.textContent)
+              return content.trim();
+            }))
+        
+            console.log(data)
+        
             return {
-                numero_empleado: data[0],
-                fechaRegistro: data[2],
-                horaRegistro: data[3]
+              numero_empleado: data[0],
+              fechaRegistro: data[2],
+              horaRegistro: data[3],
             }
-        }))
+          }))
+          tableData.push(...batchData)
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        }
+
+
         await navegador.close()
         tableData.pop()
 
-        await Checks.bulkCreate(tableData)
         console.log(tableData)
+        await Checks.bulkCreate(tableData)
 
     } catch (error) {
         await navegador.close()
