@@ -10,8 +10,8 @@ import { enviarCorreoErrores } from '../helpers/correosErrores.js'
 import { generarExcel } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-   // const navegador = await puppeteer.launch({ headless: false })
-    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    const navegador = await puppeteer.launch({ headless: false })
+   // const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -38,7 +38,7 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         await new Promise(resolve => setTimeout(resolve, 10000))
         /**Seleccionar reportes */
         await pagina.goto('https://erp.biocheck.net/web#menu_id=232&action=287&cids=116')
-        await new Promise(resolve => setTimeout(resolve, 4000))
+        await new Promise(resolve => setTimeout(resolve, 10000))
         seccionError = 'LLenado biocheck reporte error.'
         /**seleccionar HTML select */
         await pagina.evaluate(() => {

@@ -4,10 +4,7 @@ import cron from 'node-cron'
 
 import db from './config/db.js'
 
-import { obtenerTurnoEmpleado } from './controllers/turnosController.js'
-
-import { menejoRutinaObtenerTurnoEmpleado } from './helpers/manejoRutina.js'
-import { obtenerResultadosMensuales } from './controllers/turnosMensualesController.js'
+import { menejoRutinaObtenerTurnoEmpleado, menejoRutinaObtenerTurnosMes } from './helpers/manejoRutina.js'
 
 const app = express()
 const port = 4013
@@ -27,7 +24,7 @@ cron.schedule('30 10 * * 1-6', () => {
 
 
 cron.schedule('0 0 1 * *', () => {
-    obtenerResultadosMensuales()
+    menejoRutinaObtenerTurnosMes()
 })
 
 // Routing

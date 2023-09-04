@@ -101,12 +101,9 @@ export const obtenerResultadosMensuales = async (req, res) => {
           tableData.push(...batchData)
         await new Promise(resolve => setTimeout(resolve, 2000))
         }
-
-
         await navegador.close()
-        tableData.pop()
-
-        console.log(tableData)
+        
+        await Checks.destroy({ where: {} })
         await Checks.bulkCreate(tableData)
 
     } catch (error) {
