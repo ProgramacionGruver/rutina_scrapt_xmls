@@ -6,8 +6,8 @@ export const enviarCorreo = async ( objRetardo, objFalta ) => {
         from: 'sgruver@gruver.mx',
         to: ['RRHH@gruver.mx'] ,
         bcc:['javier.cano@gruver.mx', 'jpedroza@gruver.mx'],
-        subject: 'Faltas y Retardos',
-        html: 'Notificacion de faltas y retardos de sucursales.',
+        subject: 'Retardos y omisiones',
+        html: 'Notificacion de retardos y omisiones de checks de sucursales.',
         attachments: [
             {
                 filename: objRetardo.nombreArchivo,

@@ -6,11 +6,11 @@ import { parse, isBefore } from 'date-fns'
 import { api } from '../boot/axios.js'
 
 import { enviarCorreo } from '../helpers/enviarCorreo.js'
-import { generarExcelFalta, generarExcelRetardo } from '../helpers/generarExcel.js'
+import { generarExcelOmisiones, generarExcelRetardo } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-    //const navegador = await puppeteer.launch({ headless: false })
-    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    const navegador = await puppeteer.launch({ headless: false })
+    //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -151,7 +151,7 @@ export const obtenerTurnoEmpleado = async (req, res) => {
 
         const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo)
 
-        const usuariosFalta = usuariosActivos.filter(usuarioSistemas =>
+        const usuariosOmisiones = usuariosActivos.filter(usuarioSistemas =>
             !tableData.some(usuarioCheck => usuarioCheck.numero_empleado === usuarioSistemas.numero_empleado)
                     ).map( e => ({  
                     numero_empleado: e.numero_empleado,
@@ -162,9 +162,9 @@ export const obtenerTurnoEmpleado = async (req, res) => {
             }))
 
         const bufferRetardo = await generarExcelRetardo(usuariosRetardos)
-        const bufferFalta = await generarExcelFalta(usuariosFalta)
+        const bufferOmisiones = await generarExcelOmisiones(usuariosOmisiones)
 
-        enviarCorreo(bufferRetardo, bufferFalta)
+        enviarCorreo(bufferRetardo, bufferOmisiones)
 
     } catch (error) {
         await navegador.close()

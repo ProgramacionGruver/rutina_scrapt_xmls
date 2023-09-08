@@ -85,11 +85,11 @@ export const generarExcelRetardo =  async ( array ) => {
 
 }
 
-export const generarExcelFalta =  async ( array ) => {
+export const generarExcelOmisiones  =  async ( array ) => {
     
     const woorkbook = new ExcelJs.Workbook()
-    const nombreArchivo = 'Faltas.xlsx'
-    const pagina = woorkbook.addWorksheet('Faltas')
+    const nombreArchivo = 'Omisiones.xlsx'
+    const pagina = woorkbook.addWorksheet('omisiones')
 
     const columnas = [
         { header: 'No. de empleado', key: 'numero_empleado' },
