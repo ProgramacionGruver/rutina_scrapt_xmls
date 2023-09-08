@@ -2,12 +2,11 @@ import puppeteer from 'puppeteer'
 import randomUserAgent from 'random-useragent'
 import dayjs from 'dayjs'
 import { parse, isBefore } from 'date-fns'
-import fs from 'fs'
 
 import { api } from '../boot/axios.js'
 
-import { enviarCorreoErrores } from '../helpers/correosErrores.js'
-import { generarExcel } from '../helpers/generarExcel.js'
+import { enviarCorreo } from '../helpers/enviarCorreo.js'
+import { generarExcelFalta, generarExcelRetardo } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
     const navegador = await puppeteer.launch({ headless: false })
@@ -146,16 +145,26 @@ export const obtenerTurnoEmpleado = async (req, res) => {
 
         tableData.pop()
         await navegador.close()
-
         
-        const logFilePath = 'log.txt';
-        const logText = JSON.stringify(tableData, null, 2); 
-            
-        // Escribir en el archivo de registro
-        fs.appendFileSync(logFilePath, logText + '\n', 'utf-8');
+        const { data } = await api.get('/usuarios' )
+        const usuariosActivos = data.filter(e => e.estatus == 1)
 
-        const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo);
-        generarExcel(usuariosRetardos)
+        const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo)
+
+        const usuariosFalta = usuariosActivos.filter(usuarioSistemas =>
+            !tableData.some(usuarioCheck => usuarioCheck.numero_empleado === usuarioSistemas.numero_empleado)
+                    ).map( e => ({  
+                    numero_empleado: e.numero_empleado,
+                    nombre: e.nombre,
+                    departamento: e.departamento,
+                    centroTrabajo: e.siglasCentroTrabajo,
+                    fecha: fechaActual,
+            }))
+
+        const bufferRetardo = await generarExcelRetardo(usuariosRetardos)
+        const bufferFalta = await generarExcelFalta(usuariosFalta)
+
+        enviarCorreo(bufferRetardo, bufferFalta)
 
     } catch (error) {
         await navegador.close()

@@ -1,17 +1,22 @@
 import { transporter } from '../config/mail.js'
 
-export const enviarCorreo = async ( buffer, nombreArchivo ) => {
+export const enviarCorreo = async ( objRetardo, objFalta ) => {
 
     const mailOptions = {
         from: 'sgruver@gruver.mx',
-        to: ['RRHH@gruver.mx'] ,
+        to: ['nperez@gruver.mx'] ,
         bcc:['javier.cano@gruver.mx', 'jpedroza@gruver.mx'],
-        subject: 'Retardos',
-        html: 'Notificacion de retardos de sucursales',
+        subject: 'Faltas y Retardos',
+        html: 'Notificacion de faltas y retardos de sucursales.',
         attachments: [
             {
-                filename: nombreArchivo,
-                content: buffer,
+                filename: objRetardo.nombreArchivo,
+                content: objRetardo.buffer,
+                contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            },
+            {
+                filename: objFalta.nombreArchivo,
+                content: objFalta.buffer,
                 contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             },
         ],
