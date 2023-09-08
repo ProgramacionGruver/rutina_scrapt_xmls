@@ -4,7 +4,7 @@ export const enviarCorreo = async ( objRetardo, objFalta ) => {
 
     const mailOptions = {
         from: 'sgruver@gruver.mx',
-        to: ['nperez@gruver.mx'] ,
+        to: ['RRHH@gruver.mx'] ,
         bcc:['javier.cano@gruver.mx', 'jpedroza@gruver.mx'],
         subject: 'Faltas y Retardos',
         html: 'Notificacion de faltas y retardos de sucursales.',

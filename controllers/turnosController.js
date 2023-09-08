@@ -9,8 +9,8 @@ import { enviarCorreo } from '../helpers/enviarCorreo.js'
 import { generarExcelFalta, generarExcelRetardo } from '../helpers/generarExcel.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-    const navegador = await puppeteer.launch({ headless: false })
-    //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    //const navegador = await puppeteer.launch({ headless: false })
+    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
