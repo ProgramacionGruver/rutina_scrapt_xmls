@@ -78,6 +78,5 @@ export const generarExcel =  async ( array ) => {
 
     const buffer = await woorkbook.xlsx.writeBuffer()
     enviarCorreo( buffer, nombreArchivo )
-   //enviarCorreocc( buffer, nombreArchivo )
 
 }
