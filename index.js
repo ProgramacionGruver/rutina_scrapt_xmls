@@ -18,8 +18,8 @@ db.sync()
 //permisos de cors
 app.use(cors())
 
-menejoRutinaObtenerTurnoEmpleado()
 cron.schedule('30 10 * * 1-6', () => {
+    menejoRutinaObtenerTurnoEmpleado()
 })
 
 

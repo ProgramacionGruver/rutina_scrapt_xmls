@@ -21,6 +21,7 @@ export const enviarCorreo = async ( objRetardo, objFalta ) => {
             },
         ],
     }
+    
     await transporter.sendMail(mailOptions, ( error, info ) => {
         if ( error ) {
             return console.log( error )
