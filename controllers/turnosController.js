@@ -7,10 +7,11 @@ import { api } from '../boot/axios.js'
 
 import { enviarCorreo } from '../helpers/enviarCorreo.js'
 import { generarExcelOmisiones, generarExcelRetardo } from '../helpers/generarExcel.js'
+import { formarFechaBioCheck } from '../helpers/formatearFecha.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-    //const navegador = await puppeteer.launch({ headless: false })
-    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    const navegador = await puppeteer.launch({ headless: false })
+    //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -45,13 +46,17 @@ export const obtenerTurnoEmpleado = async (req, res) => {
             selectElement.value = '"html"'
             selectElement.dispatchEvent(new Event('change', { bubbles: true }))
         })
-        const fechaActual = dayjs().format("DD/MM/YYYY")
+        //const fechaInicio = dayjs().format("DD/MM/YYYY")
+        //const fechaFin = dayjs().format("DD/MM/YYYY")
+        const fechaInputInicio = '04/09/2023'
+        const fechaInputFin = '09/09/2023'
+
         /**seleccionar fecha inicio select */
         const fechaInico = await pagina.waitForSelector('#o_field_input_13')
-        await fechaInico.type(fechaActual)
+        await fechaInico.type(fechaInputInicio)
         /**seleccionar fecha inicio fin */
         const fechaFin = await pagina.waitForSelector('#o_field_input_19')
-        await fechaFin.type(fechaActual)
+        await fechaFin.type(fechaInputFin)
         /**obtener reporte*/
         await pagina.click('button[name="get_report"]')
         await new Promise(resolve => setTimeout(resolve, 15000))
@@ -69,102 +74,111 @@ export const obtenerTurnoEmpleado = async (req, res) => {
 
         // Obtener todas las filas del tbody
         const rows = await tbody.$$('tr')
+        rows.pop()
 
         // Iterar a través de las filas
         seccionError = 'Destructuring error.'
-        const tableData = await Promise.all(rows.map(async (row, index) => {
-            const celdas = await row.$$('td')
-            const dataCelda = await Promise.all(celdas.map(async cell => {
-                const content = await cell.evaluate(node => node.textContent)
-                return content.trim()
-            }))
+        const tableData = []
+        const noLotes = 350
 
-            if ( dataCelda[4] ) {
+        const { data } = await api.get('/usuarios')
 
-                let detalleEntrada = {}
-                
-                const diaSemana = new Date()
 
-                if (diaSemana.getDay() === 6) {
-    
-                    const detalleUsuario = {
-                        numero_empleado: dataCelda[0],
-                        turnoSabados: dataCelda[4].replace('TURNO ', '') 
-                    }
-    
-                    await api.put('/usuarios', detalleUsuario )
-                    const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
+        for (let i = 0;i < rows.length;i += noLotes) {
+            const lotesRows = rows.slice(i, i + noLotes)
 
-                    const primeraHora = parse(data.turnoSabados.split(" - ")[0], 'HH:mm', new Date())
-                    const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
+            const batchData = await Promise.all(lotesRows.map(async (row, index) => {
+                const celdas = await row.$$('td')
+                const dataCelda = await Promise.all(celdas.map(async (cell) => {
+                    const content = await cell.evaluate((node) => node.textContent)
+                    return content.trim()
+                }))
 
-                    detalleEntrada = {
-                        numero_empleado: data.numero_empleado,
-                        nombre: data.nombre,
-                        departamento: data.departamento,
-                        centroTrabajo: data.siglasCentroTrabajo,
-                        fecha: fechaActual,
-                        turnoLunesViernes:data.turnoSabados,
-                        turnoEntrada:data.turnoSabados.split(" - ")[0],
-                        turnoSalida:data.turnoSabados.split(" - ")[1],
-                        entrada: dataCelda[7],
-                        retardo: isBefore(primeraHora, segundaHora)
-                    }
-                } else {
+                const infoUsuarioSistema = data.find( usuarioSistema => usuarioSistema.numero_empleado == dataCelda[0] )
 
-                    const detalleUsuario = {
-                        numero_empleado: dataCelda[0],
-                        turnoLunesViernes: dataCelda[4].replace('TURNO ', '') 
-                    }
-    
-                    await api.put('/usuarios', detalleUsuario )
-                    const { data } = await api.post('/noEmpleado', { noEmpleado: dataCelda[0] } )
-                    
-                    const primeraHora = parse(data.turnoLunesViernes.split(" - ")[0], 'HH:mm', new Date())
-                    const segundaHora = parse(dataCelda[7], 'HH:mm', new Date())
-
-                    detalleEntrada = {
-                        numero_empleado: data.numero_empleado,
-                        nombre: data.nombre,
-                        departamento: data.departamento,
-                        centroTrabajo: data.siglasCentroTrabajo,
-                        fecha: fechaActual,
-                        turnoLunesViernes:data.turnoLunesViernes,
-                        turnoEntrada:data.turnoLunesViernes.split(" - ")[0],
-                        turnoSalida:data.turnoLunesViernes.split(" - ")[1],
-                        entrada: dataCelda[7],
-                        retardo: isBefore(primeraHora, segundaHora)
-                    }
+                return {
+                    numero_empleado: dataCelda[0],
+                    turno: dataCelda[4].replace('TURNO ', ''),
+                    horaRegistro: dataCelda[7],
+                    fechaRegistro: dataCelda[3],
+                    nombre: infoUsuarioSistema.nombre,
+                    departamento: infoUsuarioSistema.departamento,
+                    centroTrabajo: infoUsuarioSistema.siglasCentroTrabajo,
+                    turnoLunesViernes: infoUsuarioSistema.turnoLunesViernes,
+                    turnoSabado: infoUsuarioSistema.turnoSabados,
+                    departamento: infoUsuarioSistema.departamento,
                 }
+            }))
+            tableData.push(...batchData)
+            await new Promise(resolve => setTimeout(resolve, 1000))
+        }
 
-                console.log(detalleEntrada)
 
-                return detalleEntrada
-            }
-        }))
+    const groupedData = []
 
-        tableData.pop()
+    // Usar map en lugar de forEach
+    tableData.forEach(item => {
+    const noEmpleado = item.numero_empleado
+    const fecha = item.fechaRegistro
+    const diaSemana = new Date(formarFechaBioCheck(item.fechaRegistro)).getDay()
+    
+    const primeraHora = parse(item.turno.split(" - ")[0], 'HH:mm', new Date())
+    const segundaHora = parse(item.horaRegistro, 'HH:mm', new Date())
+
+      // Buscar el registro correspondiente en el arreglo
+      let empleadoExiste = groupedData.find(record => record.noEmpleado === noEmpleado);
+
+      // Si no existe, crear un nuevo registro
+      if (!empleadoExiste) {
+        empleadoExiste = {
+            noEmpleado: noEmpleado,
+            nombre: item.nombre,
+            departamento: item.departamento,
+            sucursal: item.centroTrabajo,
+            turnoLunesViernes: item.turnoLunesViernes,
+            turnoSabado: item.turnoSabado,
+            0: {}, // Lunes
+            1: {}, // Martes
+            2: {}, // Miércoles
+            3: {}, // Jueves
+            4: {}, // Viernes
+            5: {}, // Sábado
+        }
+        groupedData.push(empleadoExiste);
+      }
+  
+      // Asignar la checada al día correspondiente
+          empleadoExiste[diaSemana] = {
+            fecha: fecha,
+            turno: item.turno,
+            check: item.horaRegistro,
+            retardo: isBefore(primeraHora, segundaHora)
+        }
+    })
+
         await navegador.close()
-        
-        const { data } = await api.get('/usuarios' )
-        const usuariosActivos = data.filter(e => e.estatus == 1)
 
-        const usuariosRetardos = tableData.filter(usuario => usuario && usuario.retardo)
+      /*  const usuariosOmisiones = data.filter( usuarioSistemas => 
+            {   
+                const usuarioCheck = tableData.find( usuarioBio => usuarioBio.numero_empleado == usuarioSistemas.numero_empleado )
 
-        const usuariosOmisiones = usuariosActivos.filter(usuarioSistemas =>
-            !tableData.some(usuarioCheck => usuarioCheck.numero_empleado === usuarioSistemas.numero_empleado)
-                    ).map( e => ({  
-                    numero_empleado: e.numero_empleado,
+                if(!usuarioCheck && usuarioSistemas.estatus){
+                    
+                    return {
+                        numero_empleado: e.numero_empleado,
                     nombre: e.nombre,
                     departamento: e.departamento,
                     centroTrabajo: e.siglasCentroTrabajo,
                     fecha: fechaActual,
-            }))
+                    }
+                }
 
-        const bufferRetardo = await generarExcelRetardo(usuariosRetardos)
-        const bufferOmisiones = await generarExcelOmisiones(usuariosOmisiones)
+            } )*/
 
-        enviarCorreo(bufferRetardo, bufferOmisiones)
+        const bufferRetardo = await generarExcelRetardo(groupedData, `Reporte semanal del ${fechaInputInicio} al ${fechaInputFin}` )
+       // const bufferOmisiones = await generarExcelOmisiones(usuariosOmisiones)
+
+        enviarCorreo(bufferRetardo)
 
     } catch (error) {
         await navegador.close()
