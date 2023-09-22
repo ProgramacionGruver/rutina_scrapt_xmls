@@ -79,7 +79,7 @@ export const generarExcelRetardo = async (array, titulo) => {
             // Iterar a través de las filas del array
             array.forEach((row, indexFila) => {
                 const dia = row[indexColumna]
-                const posicion = indexFila + 3 // Sumar 2 para coincidir con la numeración de fila
+                const posicion = indexFila + 2 // Sumar 2 para coincidir con la numeración de fila
 
                 if (Object.keys(dia).length === 0) {
                     pagina.getCell(`${letraColumna}${posicion}`).fill = {

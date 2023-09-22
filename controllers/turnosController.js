@@ -48,8 +48,8 @@ export const obtenerTurnoEmpleado = async (req, res) => {
         })
         //const fechaInicio = dayjs().format("DD/MM/YYYY")
         //const fechaFin = dayjs().format("DD/MM/YYYY")
-        const fechaInputInicio = '04/09/2023'
-        const fechaInputFin = '09/09/2023'
+        const fechaInputInicio = '18/09/2023'
+        const fechaInputFin = '22/09/2023'
 
         /**seleccionar fecha inicio select */
         const fechaInico = await pagina.waitForSelector('#o_field_input_13')
@@ -175,7 +175,7 @@ export const obtenerTurnoEmpleado = async (req, res) => {
 
             } )*/
 
-        const bufferRetardo = await generarExcelRetardo(groupedData, `Reporte semanal del ${fechaInputInicio} al ${fechaInputFin}` )
+        const bufferRetardo = await generarExcelRetardo(groupedData, `Reporte semanal del ${fechaInputInicio.replace(/\//g, '-')} al ${fechaInputFin.replace(/\//g, '-')}` )
        // const bufferOmisiones = await generarExcelOmisiones(usuariosOmisiones)
 
         enviarCorreo(bufferRetardo)
