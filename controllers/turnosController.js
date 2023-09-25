@@ -46,8 +46,8 @@ export const obtenerTurnoEmpleado = async (req, res) => {
             selectElement.value = '"html"'
             selectElement.dispatchEvent(new Event('change', { bubbles: true }))
         })
-        const fechaInputInicio = dayjs().subtract(6, 'day').format("DD/MM/YYYY")
-        const fechaInputFin = dayjs().subtract(1, 'day').format("DD/MM/YYYY")
+        const fechaInputInicio = dayjs().subtract(7, 'day').format("DD/MM/YYYY")
+        const fechaInputFin = dayjs().subtract(2, 'day').format("DD/MM/YYYY")
 
         /**seleccionar fecha inicio select */
         const fechaInico = await pagina.waitForSelector('#o_field_input_13')
