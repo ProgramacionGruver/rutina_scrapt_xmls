@@ -1,6 +1,6 @@
 import { transporter } from '../config/mail.js'
 
-export const enviarCorreo = async ( objRetardo, objFalta ) => {
+export const enviarCorreo = async ( objRetardo ) => {
 
     const mailOptions = {
         from: 'sgruver@gruver.mx',
@@ -13,12 +13,7 @@ export const enviarCorreo = async ( objRetardo, objFalta ) => {
                 filename: objRetardo.nombreArchivo,
                 content: objRetardo.buffer,
                 contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            },
-            {
-                filename: objFalta.nombreArchivo,
-                content: objFalta.buffer,
-                contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            },
+            }
         ],
     }
     

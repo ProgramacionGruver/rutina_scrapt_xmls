@@ -10,8 +10,8 @@ import { generarExcelOmisiones, generarExcelRetardo } from '../helpers/generarEx
 import { formarFechaBioCheck } from '../helpers/formatearFecha.js'
 
 export const obtenerTurnoEmpleado = async (req, res) => {
-    const navegador = await puppeteer.launch({ headless: false })
-    //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    //const navegador = await puppeteer.launch({ headless: false })
+    const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
     let seccionError = 'Creacion de web'
     try {
         const cabezera = randomUserAgent.getRandom()
@@ -46,10 +46,8 @@ export const obtenerTurnoEmpleado = async (req, res) => {
             selectElement.value = '"html"'
             selectElement.dispatchEvent(new Event('change', { bubbles: true }))
         })
-        //const fechaInicio = dayjs().format("DD/MM/YYYY")
-        //const fechaFin = dayjs().format("DD/MM/YYYY")
-        const fechaInputInicio = '18/09/2023'
-        const fechaInputFin = '22/09/2023'
+        const fechaInputInicio = dayjs().subtract(6, 'day').format("DD/MM/YYYY")
+        const fechaInputFin = dayjs().subtract(1, 'day').format("DD/MM/YYYY")
 
         /**seleccionar fecha inicio select */
         const fechaInico = await pagina.waitForSelector('#o_field_input_13')
