@@ -3,7 +3,7 @@ import { obtenerResultadosMensuales } from "../controllers/turnosMensualesContro
 
 import { enviarCorreoErrores } from "./correosErrores.js"
 
-export const menejoRutinaObtenerTurnoEmpleado = async ( intentosRestantes = 3 ) =>{
+export const menejoRutinaObtenerTurnoEmpleado = async ( intentosRestantes = 5 ) =>{
 
     if (intentosRestantes === 0) {
         enviarCorreoErrores('No se pudo obtener los turnos después de 3 intentos.')
