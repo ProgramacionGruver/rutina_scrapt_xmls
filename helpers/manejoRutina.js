@@ -1,32 +1,16 @@
-import { obtenerTurnoEmpleado } from "../controllers/turnosController.js"
-import { obtenerResultadosMensuales } from "../controllers/turnosMensualesController.js"
-
+import { obtenerXMLS } from "../controllers/obtenerXmlsController.js"
 import { enviarCorreoErrores } from "./correosErrores.js"
 
-export const menejoRutinaObtenerTurnoEmpleado = async ( intentosRestantes = 5 ) =>{
+export const manejoRutinaXML = async ( intentosRestantes = 3 ) =>{
 
     if (intentosRestantes === 0) {
-        enviarCorreoErrores('No se pudo obtener los turnos después de 3 intentos.')
-        return;
+        enviarCorreoErrores('No se pudo obtener XMLS después de 3 intentos.')
+        return
     }
 
     try {
-      await obtenerTurnoEmpleado()
+        await obtenerXMLS()
     } catch (error) {
-        menejoRutinaObtenerTurnoEmpleado(intentosRestantes - 1)
-    }
-}
-
-export const menejoRutinaObtenerTurnosMes = async ( intentosRestantes = 3 ) =>{
-
-    if (intentosRestantes === 0) {
-        enviarCorreoErrores('No se pudo obtener los turnos después de 3 intentos.')
-        return;
-    }
-
-    try {
-      await obtenerResultadosMensuales()
-    } catch (error) {
-        menejoRutinaObtenerTurnoEmpleado(intentosRestantes - 1)
+        manejoRutinaXML(intentosRestantes - 1)
     }
 }
