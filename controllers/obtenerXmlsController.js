@@ -28,10 +28,10 @@ const directorioInvalidos = 'C:\\Users\\amagdaleno\\Desktop\\invalidos'
 export const obtenerXMLS = async () => {
 
     //------NAVEGADOR PRUEBAS
-    const navegador = await puppeteer.launch({ headless: false })
+    //const navegador = await puppeteer.launch({ headless: false })
 
     //------NAVEGADOR PRODUCTIVO
-    //const navegador = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' })
+    const navegador = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']})
     
     try {
         //========BOOT WEB==============================================
