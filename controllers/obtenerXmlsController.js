@@ -18,12 +18,8 @@ const directorioDescargas = 'C:\\Users\\amagdaleno\\Downloads'
 // Directorio destino donde se moverán TODOS los archivos descomprimidos
 const directorioDestino = 'C:\\Users\\amagdaleno\\Desktop\\archivos'
 
-// Directorio donde se veran los archivos VALIDOS (INTELISIS)
-const directorioValidos = 'C:\\Users\\amagdaleno\\Desktop\\validos'
-
-// Directorio donde se veran los archivos INVALIDOS (INTELISIS)
-const directorioInvalidos = 'C:\\Users\\amagdaleno\\Desktop\\invalidos'
-
+// Directorio donde se veran los archivos Historicos
+const directorioHistorico = 'C:\\Users\\amagdaleno\\Desktop\\validos'
 
 export const obtenerXMLS = async () => {
 
@@ -37,12 +33,17 @@ export const obtenerXMLS = async () => {
         //========BOOT WEB==============================================
         //--Crear la web--//
         let seccionError = 'Error al crear la web'
-      
+  
         const cabezera = randomUserAgent.getRandom()
         const pagina = await navegador.newPage()
         await pagina.setUserAgent(cabezera)
         await pagina.setViewport({ width: 1220, height: 1080 })
-        
+        const client = await pagina.target().createCDPSession();
+        await client.send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: directorioDescargas, 
+        })
+    
         //--Abrir pagina--//
         seccionError = 'Eror al abrir la pagina.'
         await pagina.goto('https://ezaudita.com/', { timeout: 30000 })
@@ -67,7 +68,7 @@ export const obtenerXMLS = async () => {
         seccionError = 'Eror al seleccionar empresa.'
         await pagina.click('tr[data-row-key="182590"]')
         await new Promise(resolve => setTimeout(resolve, 15000))
- 
+  
         //--Seleccionar Recibidos--//
         seccionError = 'Eror al seleccionar recibidos.'
         await pagina.goto(`https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
@@ -99,14 +100,18 @@ export const obtenerXMLS = async () => {
         await new Promise(resolve => setTimeout(resolve, 5000))
         
         //--Descargar XMLS--//
-        seccionError = 'Eror al seleccionar exportar XMLS.'
+        seccionError = 'Eror al descargar XMLS.'
         await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
-        await new Promise(resolve => setTimeout(resolve, 25000))
+        await new Promise(resolve => setTimeout(resolve, 20000))
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
         seccionError = 'Eror al limpiar carpeta destino'
         await limpiarCarpetaDestino()
+
+        // Descromprimir y eliminar .zip
+        seccionError = 'Eror al descomprimir historico'
+        await descomprimirHistorico()
 
         // Descromprimir y eliminar .zip
         seccionError = 'Eror al descomprimir y eliminar .zip'
@@ -134,6 +139,17 @@ const limpiarCarpetaDestino = async () => {
     }))
 }
 
+const descomprimirHistorico = async () => {
+    const archivos = await readdirAsync(directorioDescargas)
+    await Promise.all(archivos.map(async archivo => {
+        if (path.extname(archivo) === '.zip') {
+            const rutaZip = path.join(directorioDescargas, archivo)
+            const zip = new AdmZip(rutaZip)
+            zip.extractAllTo(directorioHistorico, true)
+        }
+    }))
+}
+
 const descomprimirYEliminarZip = async () => {
     const archivos = await readdirAsync(directorioDescargas)
     await Promise.all(archivos.map(async archivo => {
@@ -141,17 +157,16 @@ const descomprimirYEliminarZip = async () => {
             const rutaZip = path.join(directorioDescargas, archivo)
             const zip = new AdmZip(rutaZip)
             zip.extractAllTo(directorioDestino, true)
-            await unlinkAsync(rutaZip);
+            await unlinkAsync(rutaZip)
         }
     }))
 }
 
 const leerYEliminarDuplicados = async () => {
-    const archivosValidos = await readdirAsync(directorioValidos)
-    const archivosInvalidos = await readdirAsync(directorioInvalidos)
+    const archivosHistorico = await readdirAsync(directorioHistorico)
     const archivoDestino = await readdirAsync(directorioDestino)
 
-    const archivosExistentes = [...archivosValidos, ...archivosInvalidos]
+    const archivosExistentes = [...archivosHistorico]
     const archivosDuplicados = archivoDestino.filter(archivo => archivosExistentes.includes(archivo))
 
     await Promise.all(archivosDuplicados.map(async archivo => {
