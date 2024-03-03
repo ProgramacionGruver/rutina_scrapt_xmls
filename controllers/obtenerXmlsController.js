@@ -13,13 +13,13 @@ const unlinkAsync = promisify(fs.unlink)
 const readFileAsync = promisify(fs.readFile)
 
 // Directorio donde están los archivos .zip descargados
-const directorioDescargas = 'C:\\Users\\amagdaleno\\Downloads'
-    
+const directorioDescargas = 'C:\\Users\\adminpcgv\\Downloads'
+
 // Directorio destino donde se moverán TODOS los archivos descomprimidos
-const directorioDestino = 'C:\\Users\\amagdaleno\\Desktop\\archivos'
+const directorioDestino = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egresos\\'
 
 // Directorio donde se veran los archivos Historicos
-const directorioHistorico = 'C:\\Users\\amagdaleno\\Desktop\\validos'
+const directorioHistorico = 'C:\\Users\\adminpcgv\\Desktop\\xmlsHistorico'
 
 export const obtenerXMLS = async () => {
 
