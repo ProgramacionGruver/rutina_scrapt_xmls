@@ -11,9 +11,9 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }))
 
 app.use(cors())
 
-//cron.schedule('0 8 * * *', () => {
-    //manejoRutinaXML()
-//})
+cron.schedule('0 1,12 * * *', () => {
+    manejoRutinaXML()
+})
 
 app.listen(port, () => console.log(`El servidor está funcionando en el puerto ${port}`))
 
