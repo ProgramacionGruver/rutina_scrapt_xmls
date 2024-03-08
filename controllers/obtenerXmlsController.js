@@ -16,7 +16,7 @@ const readFileAsync = promisify(fs.readFile)
 const directorioDescargas = 'C:\\Users\\Sistemas\\Downloads'
 
 // Directorio destino donde se moverán TODOS los archivos descomprimidos
-const directorioDestino = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egresos\\'
+const directorioDestino = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egresos\\Gastos'
 
 // Directorio donde se veran los archivos Historicos
 const directorioHistorico = 'C:\\Users\\Sistemas\\Desktop\\xmlsHistorico'
