@@ -16,7 +16,10 @@ const readFileAsync = promisify(fs.readFile)
 const directorioDescargas = 'C:\\Users\\Sistemas\\Downloads'
 
 // Directorio destino donde se moverán TODOS los archivos descomprimidos
-const directorioDestino = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egresos\\Gastos'
+const directorioIntelisis = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egresos\\Gastos'
+
+// Directorio destino dode se descomprime inicialmente
+const directorioDestino = 'C:\\Users\\Sistemas\\Desktop\\destino'
 
 // Directorio donde se veran los archivos Historicos
 const directorioHistorico = 'C:\\Users\\Sistemas\\Desktop\\xmlsHistorico'
@@ -102,27 +105,32 @@ export const obtenerXMLS = async () => {
         //--Descargar XMLS--//
         seccionError = 'Eror al descargar XMLS.'
         await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
-        await new Promise(resolve => setTimeout(resolve, 20000))
+        await new Promise(resolve => setTimeout(resolve, 25000))
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
         seccionError = 'Eror al limpiar carpeta destino'
         await limpiarCarpetaDestino()
 
-        // Descromprimir y eliminar .zip
+         // Descromprimir destino
+         seccionError = 'Eror al descomprimir destino'
+         await descomprimirZip()
+
+        // Leer y eliminar duplicados
+        seccionError = 'Eror al leer y eliminar duplicados' 
+        await leerYEliminarDuplicados()
+
+        // Descromprimir y eliminar .zip historico
         seccionError = 'Eror al descomprimir historico'
         await descomprimirHistorico()
-
-        // Descromprimir y eliminar .zip
-        seccionError = 'Eror al descomprimir y eliminar .zip'
-        await descomprimirYEliminarZip()
-
-        // Leer y eliminar duplicados desde validos e invalidos de INTELISIS
-        seccionError = 'Eror al leer carpetas de INTELISIS'
-        await leerYEliminarDuplicados()
         
         //--Eliminar xmls de nomina--//
+        seccionError = 'Eror al eliminar xml de nomina'
         await eliminarXmlsDeNomina()
+
+        //--Mover xmls a carpeta de intelisis--//
+        seccionError = 'Eror al mover archivos al directorio de intelisis'
+        await moverArchivosADirectorioIntelisis()
         
         console.log("Proceso de XMLS completado con exito.")
         await navegador.close()       
@@ -139,25 +147,13 @@ const limpiarCarpetaDestino = async () => {
     }))
 }
 
-const descomprimirHistorico = async () => {
-    const archivos = await readdirAsync(directorioDescargas)
-    await Promise.all(archivos.map(async archivo => {
-        if (path.extname(archivo) === '.zip') {
-            const rutaZip = path.join(directorioDescargas, archivo)
-            const zip = new AdmZip(rutaZip)
-            zip.extractAllTo(directorioHistorico, true)
-        }
-    }))
-}
-
-const descomprimirYEliminarZip = async () => {
+const descomprimirZip = async () => {
     const archivos = await readdirAsync(directorioDescargas)
     await Promise.all(archivos.map(async archivo => {
         if (path.extname(archivo) === '.zip') {
             const rutaZip = path.join(directorioDescargas, archivo)
             const zip = new AdmZip(rutaZip)
             zip.extractAllTo(directorioDestino, true)
-            await unlinkAsync(rutaZip)
         }
     }))
 }
@@ -171,6 +167,18 @@ const leerYEliminarDuplicados = async () => {
 
     await Promise.all(archivosDuplicados.map(async archivo => {
         await unlinkAsync(path.join(directorioDestino, archivo))
+    }))
+}
+
+const descomprimirHistorico = async () => {
+    const archivos = await readdirAsync(directorioDescargas)
+    await Promise.all(archivos.map(async archivo => {
+        if (path.extname(archivo) === '.zip') {
+            const rutaZip = path.join(directorioDescargas, archivo)
+            const zip = new AdmZip(rutaZip)
+            zip.extractAllTo(directorioHistorico, true)
+            await unlinkAsync(rutaZip)
+        }
     }))
 }
 
@@ -202,5 +210,18 @@ const eliminarXmlsDeNomina = async () => {
         }
     } catch (err) {
         console.error(`Error durante el proceso: ${err}`)
+    }
+}
+
+const moverArchivosADirectorioIntelisis = async () => {
+    try {
+        const archivos = await readdirAsync(directorioDestino)
+        for (let archivo of archivos) {
+            const rutaArchivoOriginal = path.join(directorioDestino, archivo)
+            const rutaArchivoDestino = path.join(directorioIntelisis, archivo)
+            await renameAsync(rutaArchivoOriginal, rutaArchivoDestino)
+        }
+    } catch (err) {
+        console.error(`Error durante el proceso de mover archivos: ${err}`)
     }
 }
