@@ -49,9 +49,8 @@ export const obtenerXMLS = async () => {
     
         //--Abrir pagina--//
         seccionError = 'Eror al abrir la pagina.'
-        await pagina.goto('https://ezaudita.com/', { timeout: 30000 })
+        await pagina.goto('https://app.ezaudita.com/login?utm_source=ez_ini_app_web&utm_medium=ez_ini_app_web&_gl=1*191ey7e*_gcl_au*MTQ4NTgwNTA4Ni4xNjk1NjgzMjA2*_ga*MTAxMTU1MDQyMC4xNjk1NDg4MzEz*_ga_HF49133KM2*MTcwMzIwNTMxMC40MC4xLjE3MDMyMDU4NzAuMC4wLjA.*_ga_MZX27J61HQ*MTcwMzIwNTMxMC4zOS4xLjE3MDMyMDU4NzAuMC4wLjA.&_ga=2.155773887.54681959.1703196259-1011550420.1695488313', { timeout: 30000 })
         await new Promise(resolve => setTimeout(resolve, 5000))
-        await pagina.click('a.ast-custom-button-link')
 
         //--Login--//
         seccionError = 'Eror en el login.'
