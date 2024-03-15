@@ -214,11 +214,11 @@ const eliminarXmlsDeNomina = async () => {
 
 const moverArchivosADirectorioIntelisis = async () => {
     try {
-        const archivos = await readdirAsync(directorioDestino)
+        const archivos = await readdirAsync(directorioDestino);
         for (let archivo of archivos) {
-            const rutaArchivoOriginal = path.join(directorioDestino, archivo)
-            const rutaArchivoDestino = path.join(directorioIntelisis, archivo)
-            await renameAsync(rutaArchivoOriginal, rutaArchivoDestino)
+            const rutaArchivoOriginal = path.join(directorioDestino, archivo);
+            const rutaArchivoDestino = path.join(directorioIntelisis, archivo);
+            await fs.promises.copyFile(rutaArchivoOriginal, rutaArchivoDestino);
         }
     } catch (err) {
         console.error(`Error durante el proceso de mover archivos: ${err}`)
