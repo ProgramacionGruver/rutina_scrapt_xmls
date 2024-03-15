@@ -21,6 +21,9 @@ const directorioIntelisis = 'E:\\AppsDAGOM\\eConta\\Doctos\\No Validados\\Egreso
 // Directorio destino dode se descomprime inicialmente
 const directorioDestino = 'C:\\Users\\Sistemas\\Desktop\\destino'
 
+// Directorio donde se guardaran los movimientos diarios
+const directorioDiario = 'C:\\Users\\Sistemas\\Desktop\\diario'
+
 // Directorio donde se veran los archivos Historicos
 const directorioHistorico = 'C:\\Users\\Sistemas\\Desktop\\xmlsHistorico'
 
@@ -130,6 +133,10 @@ export const obtenerXMLS = async () => {
         //--Mover xmls a carpeta de intelisis--//
         seccionError = 'Eror al mover archivos al directorio de intelisis'
         await moverArchivosADirectorioIntelisis()
+
+        //--Mover xmls a carpeta de diario--//
+        seccionError = 'Eror al mover archivos al directorio de diario'
+        await moverArchivosADirectorioDiario()
         
         console.log("Proceso de XMLS completado con exito.")
         await navegador.close()       
@@ -219,6 +226,19 @@ const moverArchivosADirectorioIntelisis = async () => {
             const rutaArchivoOriginal = path.join(directorioDestino, archivo);
             const rutaArchivoDestino = path.join(directorioIntelisis, archivo);
             await fs.promises.copyFile(rutaArchivoOriginal, rutaArchivoDestino);
+        }
+    } catch (err) {
+        console.error(`Error durante el proceso de mover archivos: ${err}`)
+    }
+}
+
+const moverArchivosADirectorioDiario = async () => {
+    try {
+        const archivos = await readdirAsync(directorioDestino);
+        for (let archivo of archivos) {
+            const rutaArchivoOriginal = path.join(directorioDestino, archivo);
+            const rutaArchivoDiario = path.join(directorioDiario, archivo);
+            await fs.promises.copyFile(rutaArchivoOriginal, rutaArchivoDiario);
         }
     } catch (err) {
         console.error(`Error durante el proceso de mover archivos: ${err}`)
