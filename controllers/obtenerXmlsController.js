@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer'
 import randomUserAgent from 'random-useragent'
 import { mes, anio } from '../helpers/constantes.js'
-import { enviarCorreoErrores } from '../helpers/correosErrores.js'
+import { enviarCorreoErrores, enviarCorreo } from '../helpers/correosErrores.js'
 import fs from 'fs'
 import path from 'path'
 import AdmZip from 'adm-zip'
@@ -137,8 +137,14 @@ export const obtenerXMLS = async () => {
         //--Mover xmls a carpeta de diario--//
         seccionError = 'Eror al mover archivos al directorio de diario'
         await moverArchivosADirectorioDiario()
+
+        // Contar archivos en directorioHistorico
+        const archivosEnHistorico = await readdirAsync(directorioHistorico)
+        // Contar archivos en directorioDestino
+        const archivosEnDestino = await readdirAsync(directorioDestino)
+
+        await enviarCorreo(`Proceso de XMLS completado con exito. Archivos mes: ${archivosEnHistorico.length} y Archivos diario: ${archivosEnDestino.length}`)
         
-        console.log("Proceso de XMLS completado con exito.")
         await navegador.close()       
     } catch (error) {
         await navegador.close()
