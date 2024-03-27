@@ -107,7 +107,7 @@ export const obtenerXMLS = async () => {
         //--Descargar XMLS--//
         seccionError = 'Eror al descargar XMLS.'
         await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
-        await new Promise(resolve => setTimeout(resolve, 25000))
+        await new Promise(resolve => setTimeout(resolve, 120000))
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
