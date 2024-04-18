@@ -30,10 +30,10 @@ const directorioHistorico = 'C:\\Users\\Sistemas\\Desktop\\xmlsHistorico'
 export const obtenerXMLS = async () => {
 
     //------NAVEGADOR PRUEBAS
-    const navegador = await puppeteer.launch({ headless: false })
+    //const navegador = await puppeteer.launch({ headless: false })
 
     //------NAVEGADOR PRODUCTIVO
-    //const navegador = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    const navegador = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']})
     
     try {
         //========BOOT WEB==============================================
@@ -107,7 +107,7 @@ export const obtenerXMLS = async () => {
         //--Descargar XMLS--//
         seccionError = 'Eror al descargar XMLS.'
         await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
-        await new Promise(resolve => setTimeout(resolve, 360000))
+        await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000))
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
