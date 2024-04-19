@@ -103,6 +103,12 @@ export const obtenerXMLS = async () => {
         seccionError = 'Eror al seleccionar exportar XMLS.'
         await pagina.click('#mi_exports')
         await new Promise(resolve => setTimeout(resolve, 5000))
+
+        // Configurar la ruta de descarga
+        await client.send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: directorioDescargas, 
+        })
         
         //--Descargar XMLS--//
         seccionError = 'Eror al descargar XMLS.'
