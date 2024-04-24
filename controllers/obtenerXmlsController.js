@@ -97,7 +97,7 @@ export const obtenerXMLS = async () => {
             // Usa para hacer clic en el botón si los métodos no funcionan
             await pagina.evaluate(button => button.click(), xmlButton)
         }
-        await new Promise(resolve => setTimeout(resolve, 10000))
+        await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000))
 
         //--Seleccionar a exportaciones XMLS--//
         seccionError = 'Eror al seleccionar exportar XMLS.'
