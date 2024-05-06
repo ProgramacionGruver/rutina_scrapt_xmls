@@ -57,7 +57,6 @@ export const obtenerXMLS = async () => {
 
         //--Login--//
         seccionError = 'Eror en el login.'
-        await new Promise(resolve => setTimeout(resolve, 5000))
         const loginInput = await pagina.waitForSelector('input[id="login-email-input"]')
         await loginInput.type('anahi.guzman@gruver.mx')
 
@@ -75,45 +74,14 @@ export const obtenerXMLS = async () => {
         await new Promise(resolve => setTimeout(resolve, 15000))
   
         //--Seleccionar Recibidos--//
-        seccionError = 'Eror al seleccionar recibidos.'
-        await pagina.goto(`https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
-        await new Promise(resolve => setTimeout(resolve, 14000))
-        
-        //--Generar XMLS--//
-        seccionError = 'Error generar XMLS.'
-        await pagina.hover('#export-button');
-        await pagina.waitForSelector('.ant-dropdown-menu-item', { visible: true, timeout: 5000 })
+        // Llamada a la función para la sección de Recibidos
+        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
 
-        // Verifica si el elemento es interactuable usando page.waitForFunction
-        await pagina.waitForFunction(() => {
-            const xmlButton = document.querySelector(".ant-dropdown-menu-item")
-            return xmlButton && xmlButton.getBoundingClientRect().height > 0 && xmlButton.getBoundingClientRect().width > 0
-        })
+        // Llamada a la función para la sección de Egreso
+        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=egress')
 
-        // Encuentra el botón XML
-        const [xmlButton] = await pagina.$x("//li[contains(@class, 'ant-dropdown-menu-item') and contains(., 'XML')]")
-
-        if (xmlButton) {
-            // Usa para hacer clic en el botón si los métodos no funcionan
-            await pagina.evaluate(button => button.click(), xmlButton)
-        }
-        await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000))
-
-        //--Seleccionar a exportaciones XMLS--//
-        seccionError = 'Eror al seleccionar exportar XMLS.'
-        await pagina.click('#mi_exports')
-        await new Promise(resolve => setTimeout(resolve, 5000))
-
-        // Configurar la ruta de descarga
-        await client.send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: directorioDescargas, 
-        })
-        
-        //--Descargar XMLS--//
-        seccionError = 'Eror al descargar XMLS.'
-        await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
-        await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000))
+        // Llamada a la función para la sección de Pago
+        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=payment')
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
@@ -156,6 +124,48 @@ export const obtenerXMLS = async () => {
         await navegador.close()
         enviarCorreoErrores(`[${seccionError}] / [${error}]`)
     }
+}
+
+const seleccionarRecibidos = async (seccionError, pagina, url) => {
+    seccionError = 'Error al seleccionar recibidos.'
+    await pagina.goto(url)
+    await new Promise(resolve => setTimeout(resolve, 14000))
+    
+    //--Generar XMLS--//
+    seccionError = 'Error generar XMLS.'
+    await pagina.hover('#export-button');
+    await pagina.waitForSelector('.ant-dropdown-menu-item', { visible: true, timeout: 5000 })
+
+    // Verifica si el elemento es interactuable usando page.waitForFunction
+    await pagina.waitForFunction(() => {
+        const xmlButton = document.querySelector(".ant-dropdown-menu-item")
+        return xmlButton && xmlButton.getBoundingClientRect().height > 0 && xmlButton.getBoundingClientRect().width > 0
+    })
+
+    // Encuentra el botón XML
+    const [xmlButton] = await pagina.$x("//li[contains(@class, 'ant-dropdown-menu-item') and contains(., 'XML')]")
+
+    if (xmlButton) {
+        // Usa para hacer clic en el botón si los métodos no funcionan
+        await pagina.evaluate(button => button.click(), xmlButton)
+    }
+    await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000))
+
+      //--Seleccionar a exportaciones XMLS--//
+      seccionError = 'Eror al seleccionar exportar XMLS.'
+      await pagina.click('#mi_exports')
+      await new Promise(resolve => setTimeout(resolve, 5000))
+
+      // Configurar la ruta de descarga
+      await client.send('Page.setDownloadBehavior', {
+          behavior: 'allow',
+          downloadPath: directorioDescargas, 
+      })
+      
+      //--Descargar XMLS--//
+      seccionError = 'Eror al descargar XMLS.'
+      await pagina.click('.ant-table-tbody > tr:nth-child(2) .ant-btn-link')
+      await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000))
 }
 
 const limpiarCarpetaDestino = async () => {
