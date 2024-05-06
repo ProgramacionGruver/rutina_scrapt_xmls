@@ -75,13 +75,13 @@ export const obtenerXMLS = async () => {
   
         //--Seleccionar Recibidos--//
         // Llamada a la función para la sección de Recibidos
-        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
+        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
 
         // Llamada a la función para la sección de Egreso
-        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=egress')
+        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=egress')
 
         // Llamada a la función para la sección de Pago
-        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=payment')
+        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=payment')
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
@@ -126,8 +126,8 @@ export const obtenerXMLS = async () => {
     }
 }
 
-const seleccionarRecibidos = async (seccionError, pagina, url) => {
-    seccionError = 'Error al seleccionar recibidos.'
+const seleccionarRecibidos = async (seccionError, client, pagina, url) => {
+   seccionError = 'Error al seleccionar recibidos.'
     await pagina.goto(url)
     await new Promise(resolve => setTimeout(resolve, 14000))
     
@@ -141,7 +141,7 @@ const seleccionarRecibidos = async (seccionError, pagina, url) => {
         const xmlButton = document.querySelector(".ant-dropdown-menu-item")
         return xmlButton && xmlButton.getBoundingClientRect().height > 0 && xmlButton.getBoundingClientRect().width > 0
     })
-
+ 
     // Encuentra el botón XML
     const [xmlButton] = await pagina.$x("//li[contains(@class, 'ant-dropdown-menu-item') and contains(., 'XML')]")
 
