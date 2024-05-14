@@ -71,17 +71,17 @@ export const obtenerXMLS = async () => {
         //--Seleccionar empresa--//
         seccionError = 'Eror al seleccionar empresa.'
         await pagina.click('tr[data-row-key="182590"]')
-        await new Promise(resolve => setTimeout(resolve, 15000))
-  
+        await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000))
+
         //--Seleccionar Recibidos--//
         // Llamada a la función para la sección de Recibidos
-        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
-
+        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=3459064f-328c-4f59-a98c-fc360a8423f5&type=ingress&period=${anio}-${mes}`)
+   
         // Llamada a la función para la sección de Egreso
-        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=egress')
+        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=3459064f-328c-4f59-a98c-fc360a8423f5&type=egress')
 
         // Llamada a la función para la sección de Pago
-        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=payment')
+        await seleccionarRecibidos(seccionError, client, pagina, 'https://app.ezaudita.com/cfdi-received?cid=3459064f-328c-4f59-a98c-fc360a8423f5&type=payment')
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
