@@ -72,16 +72,24 @@ export const obtenerXMLS = async () => {
         seccionError = 'Eror al seleccionar empresa.'
         await pagina.click('tr[data-row-key="182590"]')
         await new Promise(resolve => setTimeout(resolve, 15000))
-  
+
+        // Obtener el valor del parámetro 'cid'
+        const parametroCID = await pagina.evaluate(() => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const cid = urlParams.get('cid');
+            return cid
+          })
+
         //--Seleccionar Recibidos--//
         // Llamada a la función para la sección de Recibidos
-        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=ingress&period=${anio}-${mes}`)
+        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=ingress&period=${anio}-${mes}`)
 
         // Llamada a la función para la sección de Egreso
-        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=egress')
+        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=egress`)
 
         // Llamada a la función para la sección de Pago
-        await seleccionarRecibidos(seccionError, pagina, 'https://app.ezaudita.com/cfdi-received?cid=8fae19e4-0d64-4a52-bf6a-68e08f4e9a2e&type=payment')
+        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=payment`)
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
@@ -133,6 +141,12 @@ const seleccionarRecibidos = async (seccionError, pagina, url) => {
     
     //--Generar XMLS--//
     seccionError = 'Error generar XMLS.'
+
+    const isExportButtonEnabled = await pagina.$eval('#export-button', button => !button.disabled)
+    if (!isExportButtonEnabled) {
+        return
+    }
+
     await pagina.hover('#export-button');
     await pagina.waitForSelector('.ant-dropdown-menu-item', { visible: true, timeout: 5000 })
 
