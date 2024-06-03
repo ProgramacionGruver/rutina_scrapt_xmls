@@ -134,8 +134,8 @@ export const obtenerXMLS = async () => {
     }
 }
 
-const seleccionarRecibidos = async (seccionError, pagina, url) => {
-    seccionError = 'Error al seleccionar recibidos.'
+const seleccionarRecibidos = async (seccionError, client, pagina, url) => {
+   seccionError = 'Error al seleccionar recibidos.'
     await pagina.goto(url)
     await new Promise(resolve => setTimeout(resolve, 14000))
     
@@ -155,7 +155,7 @@ const seleccionarRecibidos = async (seccionError, pagina, url) => {
         const xmlButton = document.querySelector(".ant-dropdown-menu-item")
         return xmlButton && xmlButton.getBoundingClientRect().height > 0 && xmlButton.getBoundingClientRect().width > 0
     })
-
+ 
     // Encuentra el botón XML
     const [xmlButton] = await pagina.$x("//li[contains(@class, 'ant-dropdown-menu-item') and contains(., 'XML')]")
 
