@@ -83,13 +83,13 @@ export const obtenerXMLS = async () => {
 
         //--Seleccionar Recibidos--//
         // Llamada a la función para la sección de Recibidos
-        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=ingress&period=${anio}-${mes}`)
+        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=ingress&period=${anio}-${mes}`)
 
         // Llamada a la función para la sección de Egreso
-        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=egress`)
+        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=egress`)
 
         // Llamada a la función para la sección de Pago
-        await seleccionarRecibidos(seccionError, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=payment`)
+        await seleccionarRecibidos(seccionError, client, pagina, `https://app.ezaudita.com/cfdi-received?cid=${parametroCID}&type=payment`)
 
         //========Manejo de archivos=============================================== 
         //--Limpiar carpeta destino--//
