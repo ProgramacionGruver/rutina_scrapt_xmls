@@ -7,5 +7,5 @@ export const transporter = createTransport({
     tls: {
     ciphers:'SSLv3'
     },
-    auth: { user: 'sgruver@gruver.mx', pass: 'Gomsa01' }
+    auth: { user: 's.gruver@gruver.mx', pass: 'Soporte1' }
 })

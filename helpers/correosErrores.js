@@ -3,7 +3,7 @@ import { transporter } from '../config/mail.js'
 export const enviarCorreoErrores = async ( tipoError ) => {
 
     const mailOptions = {
-        from: 'sgruver@gruver.mx',
+        from: 's.gruver@gruver.mx',
         to: ['monitor_rutinas@gruver.mx'],
         subject: 'Error en bot XMLS',
         html: tipoError,
@@ -20,7 +20,7 @@ export const enviarCorreoErrores = async ( tipoError ) => {
 export const enviarCorreo = async ( tipoError ) => {
 
     const mailOptions = {
-        from: 'sgruver@gruver.mx',
+        from: 's.gruver@gruver.mx',
         to: ['amagdaleno@gruver.mx','jcano@gruver.mx'],
         subject: 'Rutina bot XMLS',
         html: tipoError,
