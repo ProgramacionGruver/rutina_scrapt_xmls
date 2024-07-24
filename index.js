@@ -11,7 +11,7 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }))
 
 app.use(cors())
 
-cron.schedule('0 */2 * * *', () => {
+cron.schedule('0 22 * * *', () => {
     manejoRutinaXML()
 })
 
