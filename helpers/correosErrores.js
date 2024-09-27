@@ -21,7 +21,7 @@ export const enviarCorreo = async ( tipoError ) => {
 
     const mailOptions = {
         from: 's.gruver@gruver.mx',
-        to: ['amagdaleno@gruver.mx','jcano@gruver.mx'],
+        to: ['amagdaleno@gruver.mx','jcano@gruver.mx', 'srivas@gruver.mx'],
         subject: 'Rutina bot XMLS',
         html: tipoError,
     }
